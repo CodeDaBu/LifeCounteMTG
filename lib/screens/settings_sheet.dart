@@ -21,11 +21,11 @@ class SettingsSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Text('SETTINGS', style: labelStyle(36, color: Colors.white)),
+              child:
+                  Text('SETTINGS', style: labelStyle(36, color: Colors.white)),
             ),
             const SizedBox(height: 20),
-            Text('STARTING LIFE',
-                style: labelStyle(22, color: Colors.white70)),
+            Text('STARTING LIFE', style: labelStyle(22, color: Colors.white70)),
             const SizedBox(height: 4),
             const Text(
               'Changing this restarts the game.',
@@ -49,6 +49,14 @@ class SettingsSheet extends StatelessWidget {
                   style: labelStyle(22, color: Colors.white70)),
               value: game.keepAwake,
               onChanged: game.setKeepAwake,
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              activeTrackColor: accentGreen,
+              title: Text('COMMANDER DAMAGE ALSO LOWERS LIFE',
+                  style: labelStyle(22, color: Colors.white70)),
+              value: game.commanderDamageReducesLife,
+              onChanged: game.setCommanderDamageReducesLife,
             ),
           ],
         ),

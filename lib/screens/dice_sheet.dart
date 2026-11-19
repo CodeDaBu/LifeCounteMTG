@@ -98,8 +98,8 @@ class _DiceSheetState extends State<DiceSheet> {
                   onTap: () => _roll(s),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 150),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18, vertical: 10),
                     decoration: BoxDecoration(
                       color: s == _sides ? accentGreen : Colors.white,
                       borderRadius: BorderRadius.circular(40),

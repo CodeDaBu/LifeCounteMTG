@@ -7,6 +7,7 @@ import '../widgets/hex_button.dart';
 import '../widgets/player_panel.dart';
 import '../widgets/radial_menu.dart';
 import 'dice_sheet.dart';
+import 'history_sheet.dart';
 import 'players_screen.dart';
 import 'settings_sheet.dart';
 
@@ -31,7 +32,8 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _syncWakelock() {
-    WakelockPlus.toggle(enable: game.keepAwake);
+    // Not every platform supports it; that's fine.
+    WakelockPlus.toggle(enable: game.keepAwake).catchError((Object _) {});
   }
 
   void _closeMenu() => setState(() => _menuOpen = false);
@@ -78,6 +80,10 @@ class _GameScreenState extends State<GameScreen> {
           _closeMenu();
           _showHelp();
         }),
+        RadialMenuItem('HISTORY', Colors.white, () {
+          _closeMenu();
+          _showSheet(HistorySheet(game: game));
+        }),
         RadialMenuItem('PLAYERS', const Color(0xFF1EE07F), () {
           _closeMenu();
           Navigator.of(context).push(MaterialPageRoute<void>(
@@ -96,6 +102,11 @@ class _GameScreenState extends State<GameScreen> {
           '• Tap the right side of a panel for +1, the left side for −1.\n'
           '• Hold for +10 / −10 (keeps going while you hold).\n'
           '• The small number above a total shows the recent change.\n'
+          '• Swipe up on a panel (or tap the bar at its bottom) for more: '
+          'poison and other counters, commander damage, partners, '
+          'monarch, initiative, kill/unkill, background color and name.\n'
+          '• Counters you use appear under the life total. Tap one to '
+          'change it; the arrow goes back to life.\n'
           '• Center button → menu: restart, choose players & layout, '
           'high roll to see who goes first, roll dice, settings.',
           style: TextStyle(color: Colors.white70, fontSize: 16, height: 1.4),
@@ -144,8 +155,6 @@ class _GameScreenState extends State<GameScreen> {
 
   Widget _grid() {
     final rows = game.layout.rows;
-    final rolls = game.highRollValues;
-    final winner = game.highRollWinner;
     return Padding(
       padding: const EdgeInsets.all(4),
       child: Column(
@@ -158,11 +167,12 @@ class _GameScreenState extends State<GameScreen> {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(4),
-                        child: _panel(
-                          game.layout.indexOf(r, c),
-                          rows[r][c],
-                          rolls,
-                          winner,
+                        child: PlayerPanel(
+                          // A new layout gets fresh panels.
+                          key: ValueKey('${game.layout.hashCode}-$r-$c'),
+                          game: game,
+                          index: game.layout.indexOf(r, c),
+                          quarterTurns: rows[r][c],
                         ),
                       ),
                     ),
@@ -171,16 +181,6 @@ class _GameScreenState extends State<GameScreen> {
             ),
         ],
       ),
-    );
-  }
-
-  Widget _panel(int index, int turns, List<int>? rolls, int? winner) {
-    return PlayerPanel(
-      player: game.players[index],
-      quarterTurns: turns,
-      onChange: (amount) => game.changeLife(index, amount),
-      highRoll: rolls?[index],
-      highRollFaded: winner != null && winner != index,
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:ui' show PointerDeviceKind;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -32,6 +34,10 @@ class _LifeCounterAppState extends State<LifeCounterApp> {
     return MaterialApp(
       title: 'Life Counter',
       debugShowCheckedModeBanner: false,
+      // Let mouse drags scroll too (web and desktop), not only touch.
+      scrollBehavior: const MaterialScrollBehavior().copyWith(
+        dragDevices: PointerDeviceKind.values.toSet(),
+      ),
       theme: ThemeData(
         brightness: Brightness.dark,
         colorSchemeSeed: const Color(0xFF4452FF),
