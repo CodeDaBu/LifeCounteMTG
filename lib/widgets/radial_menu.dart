@@ -16,7 +16,7 @@ class RadialMenuItem {
 /// along the ring so players on every side can read one of them.
 /// Fill the screen with it; empty areas let taps through.
 class RadialMenu extends StatelessWidget {
-  const RadialMenu({super.key, required this.items, this.radius = 118});
+  const RadialMenu({super.key, required this.items, this.radius = 140});
 
   final List<RadialMenuItem> items;
   final double radius;
@@ -27,12 +27,18 @@ class RadialMenu extends StatelessWidget {
       tween: Tween(begin: 0, end: 1),
       duration: const Duration(milliseconds: 280),
       curve: Curves.easeOutBack,
-      builder: (context, t, _) => Stack(
-        alignment: Alignment.center,
-        clipBehavior: Clip.none,
-        children: [
-          for (var i = 0; i < items.length; i++) _item(i, t),
-        ],
+      builder: (context, t, _) => LayoutBuilder(
+        // Shrink the whole ring on narrow screens so no button is cut off.
+        builder: (context, c) => Transform.scale(
+          scale: min(1.0, (c.biggest.shortestSide - 16) / (radius * 2 + 110)),
+          child: Stack(
+            alignment: Alignment.center,
+            clipBehavior: Clip.none,
+            children: [
+              for (var i = 0; i < items.length; i++) _item(i, t),
+            ],
+          ),
+        ),
       ),
     );
   }
